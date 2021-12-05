@@ -1,0 +1,86 @@
+version: '3.5'
+services:
+  pxc1:
+    image: percona/percona-xtradb-cluster:5.7.21
+    container_name: mysql_pxc_node1
+    privileged: true
+    restart: always
+    ports:
+      - 33061:3306
+    volumes:
+      - /var/lib/docker/volumes/mysql/node1/data:/var/lib/mysql
+      - /var/lib/docker/volumes/mysql/node1/log:/var/log/mysql
+    networks:
+      mysql_pxc_network:
+        ipv4_address: 172.20.0.2
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - CLUSTER_NAME=PXC
+      - XTRABACKUP_PASSWORD=123456
+  pxc2:
+    image: percona/percona-xtradb-cluster:5.7.21
+    container_name: mysql_pxc_node2
+    privileged: true
+    restart: always
+    ports:
+      - 33062:3306
+    volumes:
+      - /var/lib/docker/volumes/mysql/node2/data:/var/lib/mysql
+      - /var/lib/docker/volumes/mysql/node2/log:/var/log/mysql
+    networks:
+      mysql_pxc_network:
+        ipv4_address: 172.20.0.3
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - CLUSTER_NAME=PXC
+      - XTRABACKUP_PASSWORD=123456
+      - CLUSTER_JOIN=mysql_pxc_node1
+    depends_on:
+      - pxc1
+  pxc3:
+    image: percona/percona-xtradb-cluster:5.7.21
+    container_name: mysql_pxc_node3
+    privileged: true
+    restart: always
+    ports:
+      - 33063:3306
+    volumes:
+      - /var/lib/docker/volumes/mysql/node3/data:/var/lib/mysql
+      - /var/lib/docker/volumes/mysql/node3/log:/var/log/mysql
+    networks:
+      mysql_pxc_network:
+        ipv4_address: 172.20.0.4
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - CLUSTER_NAME=PXC
+      - XTRABACKUP_PASSWORD=123456
+      - CLUSTER_JOIN=mysql_pxc_node1
+    depends_on:
+      - pxc1
+      - pxc2
+  haproxy1:
+    image: haproxy:latest
+    container_name: mysql_pxc_h1
+    privileged: true
+    restart: always
+    ports:
+      - 4001:8888
+      - 13306:3306
+    volumes:
+      - ./config/haproxy1:/usr/local/haproxy
+    networks:
+      mysql_pxc_network:
+        ipv4_address: 172.20.0.11
+    privileged: true        
+    command: haproxy -f /usr/local/haproxy/haproxy.cfg
+    depends_on:
+      - pxc1
+      - pxc2
+      - pxc3
+networks:
+  mysql_pxc_network:
+    external: false
+    name: mysql_pxc_network
+    ipam:
+      config:
+      - subnet: 172.20.0.0/24

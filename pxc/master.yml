@@ -1,0 +1,26 @@
+version: '3.5'
+services:
+  pxc1:
+    image: percona/percona-xtradb-cluster:5.7.21
+    container_name: mysql_pxc_node1
+    privileged: true
+    restart: always
+    ports:
+      - 33061:3306
+    volumes:
+      - /var/lib/docker/volumes/mysql/node1/data:/var/lib/mysql
+      - /var/lib/docker/volumes/mysql/node1/log:/var/log/mysql
+    networks:
+      mysql_pxc_network:
+        ipv4_address: 172.20.0.2
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - CLUSTER_NAME=PXC
+      - XTRABACKUP_PASSWORD=123456
+networks:
+  mysql_pxc_network:
+    external: false
+    name: mysql_pxc_network
+    ipam:
+      config:
+      - subnet: 172.20.0.0/24
