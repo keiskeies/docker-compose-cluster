@@ -1,12 +1,21 @@
 version: '3.5'
 services:
-  nextcloud:
+  pxc1:
     image: nextcloud
     container_name: nextcloud
     privileged: true
     restart: always
     ports:
       - 20080:80
-      - 20443:443
     volumes:
       - /var/lib/docker/volumes/nextcloud:/var/www/html
+    networks:
+      nextcloud_network:
+        ipv4_address: 172.24.0.2
+networks:
+  nextcloud_network:
+    external: false
+    name: nextcloud_network
+    ipam:
+      config:
+      - subnet: 172.24.0.0/24

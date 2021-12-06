@@ -8,7 +8,9 @@ docker run -itd \
 -v /var/lib/docker/volumes/mysql/single/conf:/etc/mysql \
 -v /var/lib/docker/volumes/mysql/single/log:/var/log/mysql \
 -v /var/lib/docker/volumes/mysql/single/data:/var/lib/mysql \
--v /var/lib/docker/volumes/mysql/single/mysql-files:/var/lib/mysql-files \
 -e MYSQL_ROOT_PASSWORD=pojienimasiquanjia \
-mysql
+mysql:5.7
 chmod -R 777 /var/lib/docker/volumes/mysql/single
+
+firewall-cmd --zone=public --add-port=3306/tcp --permanent
+firewall-cmd --reload
