@@ -1,11 +1,13 @@
 #/bin/bash
+
 docker run -itd \
---name=nextcloud \
---restart=always \
---privileged=true \
--p 20080:80 \
+--name nextcloud \
+-p 20090:9000 \
 -v /var/lib/docker/volumes/nextcloud:/var/www/html \
-nextcloud 
+--link mysql:mysql \
+--restart unless-stopped \
+--privileged=true \
+nextcloud:fpm
 
 chmod -R 777 /var/lib/docker/volumes/nextcloud
 
