@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   pxc2:
-    image: percona/percona-xtradb-cluster:5.7.21
+    image: percona/percona-xtradb-cluster:5.7.30
     container_name: mysql_pxc_node2
     privileged: true
     restart: always
@@ -19,7 +19,7 @@ services:
       - XTRABACKUP_PASSWORD=123456
       - CLUSTER_JOIN=mysql_pxc_node1
   pxc3:
-    image: percona/percona-xtradb-cluster:5.7.21
+    image: percona/percona-xtradb-cluster:5.7.30
     container_name: mysql_pxc_node3
     privileged: true
     restart: always

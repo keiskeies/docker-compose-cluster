@@ -1,5 +1,5 @@
 #/bin/bash
-
+docker rm -f mysql
 docker run -itd \
 -p 3306:3306 \
 --name mysql \

@@ -1,0 +1,47 @@
+version: '3.5'
+services:
+  rancher_1:
+    image: rancher/server:stable
+    container_name: rancher_1
+    restart: always
+    ports:
+      - 28081:8080
+      - 29346:9345
+    networks:
+      rancher_network:
+        ipv4_address: 172.21.0.2
+    command: " --db-host 172.17.0.1 --db-port 13306 --advertise-address 192.168.31.236 --advertise-http-port 28081"
+  rancher_2:
+    image: rancher/server:stable
+    container_name: rancher_2
+    restart: unless-stopped
+    ports:
+      - 28082:8080
+      - 29347:9345
+    depends_on:
+      - rancher_1
+    networks:
+      rancher_network:
+        ipv4_address: 172.21.0.3
+    command: " --db-host 172.17.0.1 --db-port 13306 --advertise-address 192.168.31.236 --advertise-http-port 28082"
+  rancher_3:
+    image: rancher/server:stable
+    container_name: rancher_3
+    restart: unless-stopped
+    ports:
+      - 28083:8080
+      - 29348:9345
+    depends_on:
+      - rancher_1
+      - rancher_2
+    networks:
+      rancher_network:
+        ipv4_address: 172.21.0.4
+    command: " --db-host 172.17.0.1 --db-port 13306 --advertise-address 192.168.31.236 --advertise-http-port 28083"
+networks:
+  rancher_network:
+    external: false
+    name: rancher_network
+    ipam:
+      config:
+      - subnet: 172.21.0.0/24
