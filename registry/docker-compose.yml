@@ -1,0 +1,51 @@
+
+version: '3.5'
+services:
+  registry_1:
+    image: registry:2.6.2
+    container_name: registry_1
+    restart: always
+    privileged: true
+    volumes:
+      - /var/lib/docker/volumes/registry/registry:/var/lib/registry
+      - /var/lib/docker/volumes/registry/auth:/auth
+    ports:
+      - 5001:5000
+  registry_ui:
+    image: konradkleine/docker-registry-frontend:v2
+    container_name: registry_ui
+    restart: always
+    privileged: true
+    environment:
+      - ENV_DOCKER_REGISTRY_HOST=172.17.0.1
+      - ENV_DOCKER_REGISTRY_PORT=5001
+    ports:
+      - 8051:80
+  registry_2:
+    image: registry:2.6.2
+    container_name: registry_2
+    restart: always
+    privileged: true
+    volumes:
+      - /var/lib/docker/volumes/registry/registry:/var/lib/registry
+      - /var/lib/docker/volumes/registry/auth:/auth
+    ports:
+      - 5002:5000
+    depends_on:
+      - registry_ui
+      - registry_1
+  registry_3:
+    image: registry:2.6.2
+    container_name: registry_3
+    restart: always
+    privileged: true
+    volumes:
+      - /var/lib/docker/volumes/registry/registry:/var/lib/registry
+      - /var/lib/docker/volumes/registry/auth:/auth
+    ports:
+      - 5003:5000
+    depends_on:
+      - registry_ui
+      - registry_1
+      - registry_2
+
